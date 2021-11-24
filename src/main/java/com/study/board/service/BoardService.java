@@ -21,20 +21,25 @@ public class BoardService {
     //글 작성
     public void write(Board board, MultipartFile file){
 
-        String projectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
-        UUID uuid = UUID.randomUUID();
-        String fileName = uuid + "_" + file.getOriginalFilename();
+        if(file !=null) {
+            String projectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
+            UUID uuid = UUID.randomUUID();
+            String fileName = uuid + "_" + file.getOriginalFilename();
 
-        File saveFile = new File(projectPath, fileName);
-        try {
-            file.transferTo(saveFile);
-        } catch (IOException e) {
-            e.printStackTrace();
+            File saveFile = new File(projectPath, fileName);
+            try {
+                file.transferTo(saveFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            board.setFilepath("/files/" + fileName);
+            board.setFilename(fileName);
+
+            boardRepository.save(board);
+        }else{
+            boardRepository.save(board);
         }
-        board.setFilepath("/files/" + fileName);
-        board.setFilename(fileName);
 
-        boardRepository.save(board);
 
     }
     //게시글 리스트 처리
@@ -44,7 +49,7 @@ public class BoardService {
     }
     //게시글 상세
       public Board boardView(Integer id){
-        
+
         return boardRepository.findById(id).get();
       }
 
