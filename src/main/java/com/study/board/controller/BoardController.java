@@ -19,31 +19,33 @@ import org.springframework.web.multipart.MultipartFile;
 public class BoardController {
     @Autowired
     private BoardService boardService;
+
     @GetMapping("/board/write") //localhost:8099/board/write
-    public String boardWriteForm(){
+    public String boardWriteForm() {
 
         return "boardwrite";
     }
+
     @PostMapping("/board/writepro")
-    public String boardWritePro(Board board, Model model, MultipartFile file){
+    public String boardWritePro(Board board, Model model, MultipartFile file) {
 
-    boardService.write(board, file);
+        boardService.write(board, file);
 
-    model.addAttribute("message", "글 작성이 완료되었습니다");
-    model.addAttribute("searchUrl", "/board/list");
+        model.addAttribute("message", "글 작성이 완료되었습니다");
+        model.addAttribute("searchUrl", "/board/list");
         return "message";
     }
 
     @GetMapping("/board/list")
     public String boardList(Model model,
-                            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort .Direction.DESC)
-                            Pageable pageable, String searchKeyword){
+                            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC)
+                                    Pageable pageable, String searchKeyword) {
 
         Page<Board> list = null;
 
-        if (searchKeyword == null){
+        if (searchKeyword == null) {
             list = boardService.boardList(pageable);
-        }else{
+        } else {
             list = boardService.boardSearchList(searchKeyword, pageable);
         }
 
@@ -59,20 +61,20 @@ public class BoardController {
     }
 
     @GetMapping("/board/view") // localhost:8080/board/view?id=1
-    public String boardView(Model model, Integer id){
+    public String boardView(Model model, Integer id) {
 
-        model.addAttribute("board",boardService.boardView(id));
+        model.addAttribute("board", boardService.boardView(id));
         return "boardview";
     }
 
     @GetMapping("/board/delete")
-    public String boardDelete(Integer id){
+    public String boardDelete(Integer id) {
         boardService.boardDelete(id);
         return "redirect:/board/list";
     }
 
     @GetMapping("/board/modify/{id}")
-    public String boardModify(@PathVariable("id") Integer id, Model model){
+    public String boardModify(@PathVariable("id") Integer id, Model model) {
 
         model.addAttribute("board", boardService.boardView(id));
 
@@ -80,7 +82,7 @@ public class BoardController {
     }
 
     @PostMapping("/board/update/{id}")
-    public String boardUpdate(@PathVariable("id") Integer id, Board board, Model model, MultipartFile file){
+    public String boardUpdate(@PathVariable("id") Integer id, Board board, Model model, MultipartFile file) {
 
         Board boardTemp = boardService.boardView(id);
         boardTemp.setTitle(board.getTitle());
